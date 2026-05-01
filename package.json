@@ -23,7 +23,7 @@
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
-    "@next/mdx": "14.2.18",
+    "@next/mdx": "14.2.35",
     "@types/mdx": "2.0.13",
     "katex": "0.16.11",
     "next": "14.2.18",
