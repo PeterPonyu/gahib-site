@@ -1,0 +1,16 @@
+# Default owner for everything in the repo.
+*                                @PeterPonyu
+
+# Confidentiality-critical paths. Any change here REQUIRES owner review.
+/.github/workflows/              @PeterPonyu
+/.github/CODEOWNERS              @PeterPonyu
+/scripts/                        @PeterPonyu
+/content/PUBLISH.json            @PeterPonyu
+/next.config.mjs                 @PeterPonyu
+
+# Pages and components — owner review for content changes.
+/app/                            @PeterPonyu
+/src/                            @PeterPonyu
+
+# Site assets — owner review (figure additions are confidentiality-sensitive).
+/public/                         @PeterPonyu

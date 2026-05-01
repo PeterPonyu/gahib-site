@@ -1,0 +1,45 @@
+{
+  "name": "gahib-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GAHIB project showcase — single-cell graph-attention VAE with information bottleneck and Lorentz hyperbolic geometry",
+  "engines": {
+    "node": ">=20.0.0 <21",
+    "pnpm": ">=9.0.0 <10"
+  },
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "dev": "next dev",
+    "prebuild": "node scripts/check-figures.mjs && node scripts/check-mdx-refs.mjs",
+    "build": "next build",
+    "postbuild": "node scripts/check-output.mjs",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "check:figures": "node scripts/check-figures.mjs",
+    "check:mdx-refs": "node scripts/check-mdx-refs.mjs",
+    "check:output": "node scripts/check-output.mjs"
+  },
+  "dependencies": {
+    "@mdx-js/loader": "^3.1.0",
+    "@mdx-js/react": "^3.1.0",
+    "@next/mdx": "14.2.18",
+    "@types/mdx": "2.0.13",
+    "katex": "0.16.11",
+    "next": "14.2.18",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "rehype-katex": "7.0.1",
+    "remark-gfm": "4.0.0",
+    "remark-math": "6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.16.10",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "autoprefixer": "10.4.20",
+    "postcss": "8.4.49",
+    "tailwindcss": "3.4.14",
+    "typescript": "5.6.3"
+  }
+}

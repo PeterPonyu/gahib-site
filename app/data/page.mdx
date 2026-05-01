@@ -1,0 +1,40 @@
+import { FigureCard } from '@/components/FigureCard';
+import { BenchmarkTable } from '@/components/BenchmarkTable';
+
+# Data
+
+GAHIB is evaluated on seven publicly available single-cell RNA-seq
+datasets spanning multiple tissues, organisms, and developmental stages.
+All datasets are obtained from their original publications or from
+`scanpy.datasets` / `scvelo.datasets`.
+
+<FigureCard
+  src="/gahib-site/figures/dataset_taxonomy.png"
+  alt="Taxonomy of single-cell datasets used to evaluate GAHIB"
+  caption="Datasets span hematopoiesis, neuronal development, gastrulation, and pancreatic differentiation."
+  width={1600}
+  height={1000}
+/>
+
+<BenchmarkTable />
+
+## Acquisition
+
+Public datasets are accessible via standard tools:
+
+- **`paul15`** — `scanpy.datasets.paul15()`
+- **`pbmc3k_processed`** — `scanpy.datasets.pbmc3k_processed()`
+- **DentateGyrus, Pancreas, BoneMarrow, ForebrainGlut** — see
+  `scvelo.datasets.*` or the original GEO accessions cited in the
+  manuscript.
+- **Gastrulation** — Pijuan-Sala et al. 2019; download from the original
+  publication's data portal.
+
+The exact preprocessing pipeline (normalization, HVG selection, PCA) is
+encoded in `experiments/run_*.py` in the code repository.
+
+## Confidentiality note
+
+This site does not host raw data, cell barcodes, or sample identifiers.
+Curated counts and embeddings are obtained directly from upstream
+publications.

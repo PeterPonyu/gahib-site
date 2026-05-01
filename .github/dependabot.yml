@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # GitHub Actions — pinned by SHA in deploy.yml; Dependabot will open PRs
+  # with bumped SHAs monthly so they remain auditable.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    reviewers:
+      - PeterPonyu
+
+  # npm — pnpm reads package.json + pnpm-lock.yaml; Dependabot supports both.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    reviewers:
+      - PeterPonyu
+    ignore:
+      # Major-version bumps need manual review; let monthly cycle propose them
+      # but do not bundle with other updates.
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']

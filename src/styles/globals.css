@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'katex/dist/katex.min.css';
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-white text-slate-900 antialiased;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+h1, h2, h3, h4 {
+  @apply font-serif tracking-tight;
+}
+
+a {
+  @apply text-brand-700 underline-offset-2 hover:underline;
+}
+
+code {
+  @apply font-mono text-[0.92em];
+}
+
+pre {
+  @apply font-mono text-sm leading-relaxed;
+}
+
+/* Slightly tighter KaTeX sizing for inline math */
+.katex {
+  font-size: 1em;
+}

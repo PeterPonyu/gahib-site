@@ -1,0 +1,70 @@
+import { FigureCard } from '@/components/FigureCard';
+
+# Method
+
+GAHIB fits a variational autoencoder on single-cell RNA-seq counts. The
+encoder can be a multilayer perceptron, a Transformer, or a graph neural
+network (GAT, GCN, GraphSAGE, ChebConv, TAG, GraphTransformer, ARMA), and
+the latent representation is shaped by three losses that together produce a
+hierarchy-aware embedding.
+
+<FigureCard
+  src="/gahib-site/figures/architecture.png"
+  alt="GAHIB architecture: graph-attention encoder, information bottleneck, hyperbolic loss"
+  caption="The encoder produces a high-dimensional latent. An information bottleneck compresses it to a 2-D manifold coordinate; a Lorentz hyperbolic loss anchors that coordinate on the hyperboloid."
+  width={1600}
+  height={1100}
+/>
+
+## Three losses
+
+**Reconstruction.** A count likelihood — negative-binomial, zero-inflated
+negative-binomial, Poisson, or zero-inflated Poisson — fits the raw counts.
+
+**Information bottleneck.** A second decoder reconstructs the input from a
+2-D manifold coordinate, compressing the latent into a low-dimensional
+representation suitable for visualization and trajectory analysis.
+
+**Lorentz hyperbolic loss.** Anchors the manifold coordinate on the
+hyperboloid model of hyperbolic space. The Lorentz distance between two
+points on the hyperboloid is
+
+$$
+d_\mathcal{L}(\mathbf{u}, \mathbf{v}) = \operatorname{arcosh}(-\langle \mathbf{u}, \mathbf{v}\rangle_\mathcal{L})
+$$
+
+where the Minkowski inner product is
+
+$$
+\langle \mathbf{u}, \mathbf{v}\rangle_\mathcal{L} = -u_0 v_0 + \sum_{i=1}^{d} u_i v_i.
+$$
+
+Radial distance from the origin then encodes hierarchy: cells closer to
+the origin sit higher in the developmental tree, and lineage divergence
+maps to angular separation.
+
+<FigureCard
+  src="/gahib-site/figures/overview.png"
+  alt="GAHIB overview: end-to-end pipeline"
+  caption="Pipeline overview: scRNA-seq counts → encoder → bottleneck → hyperbolic embedding."
+  width={1600}
+  height={900}
+/>
+
+## Important constraint
+
+The hyperbolic loss is degenerate when the bottleneck coordinate is
+untrained (i.e., when the bottleneck reconstruction weight is zero). The
+implementation enforces this dependency.
+
+## Optional trajectory modules
+
+Stochastic differential equation (SDE) and partial differential equation
+(PDE) modules are provided for trajectory experiments. These are off by
+default and are documented in the source.
+
+<div className="my-6 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+  Detailed quantitative comparisons against baselines, ablations, and
+  interpretability analyses appear in the manuscript and will be published
+  on this site upon journal acceptance.
+</div>

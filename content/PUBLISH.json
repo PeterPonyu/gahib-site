@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "comment": "Authoritative figure allowlist. Files in public/figures/ MUST appear in either prepub or postpub. The active list is selected at build time by NEXT_PUBLIC_PREPUB. Default mode is prepub (true).",
+  "prepub": [
+    "architecture.png",
+    "overview.png",
+    "dataset_taxonomy.png"
+  ],
+  "postpub": [
+    "fig_downstream_analysis.png",
+    "ablation_all_metrics.png",
+    "encoder_all_metrics.png",
+    "gmvae_all_metrics.png",
+    "interp_summary.png",
+    "interp_hyperbolic.png",
+    "interp_embedding_poincare.png",
+    "interp_bottleneck.png",
+    "classical_all_metrics.png",
+    "scdeep_all_metrics.png",
+    "gconv_all_metrics.png",
+    "disent_all_metrics.png",
+    "hyperparam_sensitivity.png",
+    "computational_cost.png",
+    "latent_dim_and_seed.png"
+  ],
+  "embargoed_substrings": [
+    "interp_",
+    "_all_metrics",
+    "hyperparam_",
+    "latent_dim_",
+    "fig_downstream_",
+    "computational_"
+  ]
+}
