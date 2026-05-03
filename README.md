@@ -82,14 +82,27 @@ NEXT_PUBLIC_BASE_PATH=/gahib pnpm build  # short subpath
 
 ## Pages
 
-- `/` — landing (hero + 3 cards)
-- `/method` — architecture + KaTeX-rendered Lorentz distance
-- `/data` — dataset taxonomy + benchmark table (numeric scores withheld
-  pre-publication)
-- `/results` — gated; renders `ComingSoon` pre-publication
+- `/` — landing, safe route cards, and integrated PeterPonyu/SCPortal
+   project-network section
+- `/method` — text-first architecture summary, KaTeX-rendered Lorentz
+   distance, and manuscript diagrams below the first content fold
+- `/data` — 53-dataset inventory, preprocessing notes, and dataset taxonomy
+- `/metrics` — 20 metric definitions plus paired-testing notes
+- `/methods` — benchmark families and method-track inventory
+- `/results` — gated; renders `ComingSoon` pre-publication and is linked
+   only as a gated footer/status route
 - `/code` — install + GitHub link
 - `/cite` — `@unpublished` BibTeX (copy-to-clipboard)
 - `/team` — author + lab badge
+
+## Public graph links
+
+GAHIB is represented in the PeterPonyu public graph and SCPortal discovery
+surface as a preview-safe companion site at
+<https://peterponyu.github.io/gahib-site/>. Keep the public-graph entry
+`noindex_follow` with `sitemap: false` while pre-publication mode is active.
+Do not link public surfaces directly to `/results/` except for the gated footer
+status note inside this site.
 
 ## Deploy
 

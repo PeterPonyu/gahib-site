@@ -1,8 +1,18 @@
 import Image from 'next/image';
+import { NextSteps, PageBody, PageHeader, SectionHeader } from '@/components/PageScaffold';
 
-# Team
+<PageHeader
+  eyebrow="Project team"
+  title="Team"
+  summary={
+    <>
+      GAHIB is developed by Zeyu Fu as part of the ZF Lab single-cell representation-learning project ecosystem.
+    </>
+  }
+/>
 
-<div className="my-8 flex items-start gap-6">
+<PageBody>
+<div className="my-8 flex flex-col gap-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-start">
   <Image
     src="/gahib-site/badges/GAHIB.svg"
     alt="ZF Lab — GAHIB"
@@ -14,24 +24,41 @@ import Image from 'next/image';
   <div>
     <h2 className="mt-0 text-2xl font-semibold">Zeyu Fu</h2>
     <p className="mt-1 text-slate-700">
-      Lead author. Developed the model, ran the benchmarks, and wrote the manuscript.
+      {'Lead author. Developed the model, ran the benchmarks, and wrote the manuscript.'}
     </p>
-    <p className="mt-2 text-sm text-slate-600">
-      <a href="https://peterponyu.github.io/" rel="noopener">peterponyu.github.io</a>
-      {' · '}
-      <a href="https://github.com/PeterPonyu" rel="noopener">github.com/PeterPonyu</a>
-    </p>
+    <div className="mt-4 flex flex-wrap gap-2" aria-label="Author profile links">
+      <a href="https://peterponyu.github.io/" rel="noopener" className="inline-flex min-h-11 items-center rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-800 no-underline transition hover:border-brand-400 hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">peterponyu.github.io</a>
+      <a href="https://github.com/PeterPonyu" rel="noopener" className="inline-flex min-h-11 items-center rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-800 no-underline transition hover:border-brand-400 hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">github.com/PeterPonyu</a>
+    </div>
   </div>
 </div>
 
-## Lab
+<section className="my-8 grid gap-4 md:grid-cols-2">
+  <div className="rounded-lg border border-slate-200 bg-slate-50 p-5">
+    <SectionHeader eyebrow="Lab" title="ZF Lab" />
+    <p className="text-sm leading-relaxed text-slate-700">
+      {'The ZF Lab focuses on representation learning for single-cell genomics. Visit the lab homepage for related projects.'}
+    </p>
+    <div className="mt-4 flex flex-wrap gap-2" aria-label="Lab links">
+      <a href="https://peterponyu.github.io/" rel="noopener" className="inline-flex min-h-11 items-center rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-800 no-underline transition hover:border-brand-400 hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">peterponyu.github.io</a>
+    </div>
+  </div>
+  <div className="rounded-lg border border-slate-200 bg-slate-50 p-5">
+    <SectionHeader eyebrow="Contact" title="Questions and collaboration" />
+    <p className="text-sm leading-relaxed text-slate-700">
+      {'For methodology questions, open an issue in the GAHIB repository. For collaboration inquiries, contact the author through the lab page.'}
+    </p>
+    <div className="mt-4 flex flex-wrap gap-2" aria-label="Project contact links">
+      <a href="https://github.com/PeterPonyu/GAHIB" rel="noopener" className="inline-flex min-h-11 items-center rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-800 no-underline transition hover:border-brand-400 hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">github.com/PeterPonyu/GAHIB</a>
+    </div>
+  </div>
+</section>
 
-The ZF Lab focuses on representation learning for single-cell genomics.
-Visit [peterponyu.github.io](https://peterponyu.github.io/) for related
-projects.
-
-## Contact
-
-For methodology questions, open an issue at
-[github.com/PeterPonyu/GAHIB](https://github.com/PeterPonyu/GAHIB).
-For collaboration inquiries, contact the author through the lab page.
+  <NextSteps
+    items={[
+      { href: '/method/', label: 'Science', title: 'Method', description: 'Read the model architecture and objective details.' },
+      { href: '/code/', label: 'Build', title: 'Code', description: 'Find the reference implementation route.' },
+      { href: '/cite/', label: 'Credit', title: 'Cite', description: 'Use the current citation metadata.' },
+    ]}
+  />
+</PageBody>

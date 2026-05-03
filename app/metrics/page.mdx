@@ -1,0 +1,56 @@
+import { MetricInventory, StatisticalTestingNotes, StudyScope } from '@/components/StudyInventory';
+import { EmbargoNote, NextSteps, PageBody, PageHeader, SectionHeader } from '@/components/PageScaffold';
+
+<PageHeader
+  eyebrow="Evaluation design"
+  title="Metrics"
+  summary={
+    <>
+      The benchmark evaluates latent representations with 20 metrics across clustering quality, projection preservation, and latent-space structure. These are the same metric families used in the manuscript.
+    </>
+  }
+>
+  <EmbargoNote>
+    Metric definitions are public in preview mode; aggregate result figures remain gated until journal acceptance.
+  </EmbargoNote>
+</PageHeader>
+
+<PageBody>
+  <StudyScope />
+
+  <section className="my-8 grid gap-4 md:grid-cols-3">
+    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+      <p className="font-mono text-xs font-medium uppercase tracking-widest text-blue-700">Axis 01</p>
+      <h2 className="mt-2 text-xl font-semibold text-slate-950">Clustering</h2>
+      <p className="mt-2 text-sm leading-relaxed text-slate-700">Partition agreement and separation against the shared Leiden reference.</p>
+    </div>
+    <div className="rounded-lg border border-cyan-200 bg-cyan-50 p-4">
+      <p className="font-mono text-xs font-medium uppercase tracking-widest text-cyan-700">Axis 02</p>
+      <h2 className="mt-2 text-xl font-semibold text-slate-950">Projection fidelity</h2>
+      <p className="mt-2 text-sm leading-relaxed text-slate-700">Co-ranking measures for UMAP and t-SNE views of each learned latent space.</p>
+    </div>
+    <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+      <p className="font-mono text-xs font-medium uppercase tracking-widest text-emerald-700">Axis 03</p>
+      <h2 className="mt-2 text-xl font-semibold text-slate-950">Latent structure</h2>
+      <p className="mt-2 text-sm leading-relaxed text-slate-700">Intrinsic spectral and geometric diagnostics before plotting or clustering.</p>
+    </div>
+  </section>
+
+  <SectionHeader
+    eyebrow="Definitions"
+    title="Metric inventory"
+    description="Each metric lists its intended direction so reviewers can distinguish optimization targets from diagnostic quantities."
+  />
+
+  <MetricInventory />
+
+  <StatisticalTestingNotes />
+
+  <NextSteps
+    items={[
+      { href: '/methods/', label: 'Next', title: 'Benchmarks', description: 'See which methods and benchmark tracks use these metrics.' },
+      { href: '/data/', label: 'Reference', title: 'Datasets', description: 'Check the 53-dataset cohort that anchors the paired comparisons.' },
+      { href: '/code/', label: 'Run', title: 'Code', description: 'Open the implementation route for reproducing experiments locally.' },
+    ]}
+  />
+</PageBody>

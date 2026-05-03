@@ -1,10 +1,26 @@
 import { BibTeX } from '@/components/BibTeX';
+import { NextSteps, PageBody, PageHeader, SectionHeader } from '@/components/PageScaffold';
 
-# Cite
+<PageHeader
+  eyebrow="Citation"
+  title="Cite"
+  summary={
+    <>
+      If GAHIB is useful in your work, cite the manuscript or repository. The full article citation will replace this preview stub on journal acceptance.
+    </>
+  }
+>
+  <p className="text-sm leading-relaxed text-slate-700">
+    {'Current state: pre-publication citation metadata. Repository-level citation files are available now.'}
+  </p>
+</PageHeader>
 
-If GAHIB is useful in your work, please cite the manuscript. The full
-citation will be updated on acceptance; until then, the canonical
-reference is the GitHub repository.
+<PageBody>
+  <SectionHeader
+    eyebrow="BibTeX"
+    title="Current citation stub"
+    description="This entry is intentionally conservative until final publication metadata are available."
+  />
 
 <BibTeX entry={`@unpublished{fu2026gahib,
   author = {Fu, Zeyu},
@@ -14,10 +30,22 @@ reference is the GitHub repository.
   url    = {https://github.com/PeterPonyu/GAHIB}
 }`} />
 
-## CITATION.cff
+  <section className="my-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <SectionHeader eyebrow="Machine-readable" title="CITATION.cff" />
+    <p className="text-sm leading-relaxed text-slate-700">
+      {'A machine-readable Citation File Format entry is provided in the repository. GitHub renders a Cite this repository button from this file, which exports BibTeX, RIS, EndNote, APA, and other formats.'}
+    </p>
+    <div className="mt-4 flex flex-wrap gap-2" aria-label="Citation reference links">
+      <a href="https://citation-file-format.github.io/" rel="noopener" className="inline-flex min-h-11 items-center rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-800 no-underline transition hover:border-brand-400 hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">Citation File Format</a>
+      <a href="https://github.com/PeterPonyu/GAHIB-assets/blob/main/CITATION.cff" rel="noopener" className="inline-flex min-h-11 items-center rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-800 no-underline transition hover:border-brand-400 hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">CITATION.cff</a>
+    </div>
+  </section>
 
-A machine-readable [Citation File Format](https://citation-file-format.github.io/)
-entry is provided in the repository at
-[`CITATION.cff`](https://github.com/PeterPonyu/GAHIB-assets/blob/main/CITATION.cff).
-GitHub renders a "Cite this repository" button from this file, which
-exports BibTeX, RIS, EndNote, APA, and other formats.
+  <NextSteps
+    items={[
+      { href: '/code/', label: 'Code', title: 'Implementation', description: 'Open the installation and quick-start route.' },
+      { href: '/team/', label: 'Contact', title: 'Team', description: 'Find project and lab contact links.' },
+      { href: '/', label: 'Home', title: 'Project overview', description: 'Return to the public landing page.' },
+    ]}
+  />
+</PageBody>

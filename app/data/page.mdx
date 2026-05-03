@@ -1,40 +1,73 @@
 import { FigureCard } from '@/components/FigureCard';
-import { BenchmarkTable } from '@/components/BenchmarkTable';
+import { EmbargoNote, NextSteps, PageBody, PageHeader, SectionHeader } from '@/components/PageScaffold';
+import { DatasetInventory, PreprocessingList, StudyScope } from '@/components/StudyInventory';
 
-# Data
+<PageHeader
+  eyebrow="Evaluation data"
+  title="Datasets"
+  summary={
+    <>
+      GAHIB is evaluated on 53 single-cell RNA-seq datasets spanning cancer and development. The inventory mirrors the manuscript taxonomy and uses the same selected dataset identifiers as the experiment runners.
+    </>
+  }
+>
+  <EmbargoNote>
+    Public metadata are shown here; raw counts, cell barcodes, model weights, and unpublished result matrices remain outside the site.
+  </EmbargoNote>
+</PageHeader>
 
-GAHIB is evaluated on seven publicly available single-cell RNA-seq
-datasets spanning multiple tissues, organisms, and developmental stages.
-All datasets are obtained from their original publications or from
-`scanpy.datasets` / `scvelo.datasets`.
+<PageBody>
+  <StudyScope />
 
-<FigureCard
-  src="/gahib-site/figures/dataset_taxonomy.png"
-  alt="Taxonomy of single-cell datasets used to evaluate GAHIB"
-  caption="Datasets span hematopoiesis, neuronal development, gastrulation, and pancreatic differentiation."
-  width={1600}
-  height={1000}
-/>
+  <SectionHeader
+    eyebrow="Inventory"
+    title="Dataset identifiers"
+    description="Cancer and development cohorts are grouped into the categories used throughout the manuscript and experiment runners."
+  />
 
-<BenchmarkTable />
+  <DatasetInventory />
 
-## Acquisition
+  <PreprocessingList />
 
-Public datasets are accessible via standard tools:
+  <SectionHeader
+    eyebrow="Reference figure"
+    title="Manuscript taxonomy figure"
+    description="Kept below the metadata inventory for site readers; the standalone site-overview figure does not repeat manuscript figures."
+  />
 
-- **`paul15`** — `scanpy.datasets.paul15()`
-- **`pbmc3k_processed`** — `scanpy.datasets.pbmc3k_processed()`
-- **DentateGyrus, Pancreas, BoneMarrow, ForebrainGlut** — see
-  `scvelo.datasets.*` or the original GEO accessions cited in the
-  manuscript.
-- **Gastrulation** — Pijuan-Sala et al. 2019; download from the original
-  publication's data portal.
+  <FigureCard
+    src="/gahib-site/figures/dataset_taxonomy.png"
+    alt="Taxonomy of the 53 single-cell datasets used to evaluate GAHIB"
+    caption="Dataset taxonomy across cancer and developmental contexts. Counts and identifiers match the manuscript evaluation cohort."
+    width={1600}
+    height={1000}
+  />
 
-The exact preprocessing pipeline (normalization, HVG selection, PCA) is
-encoded in `experiments/run_*.py` in the code repository.
+  <section className="my-8 max-w-3xl">
+    <h2 className="mb-3 text-2xl font-semibold text-slate-900">Acquisition</h2>
+    <div className="leading-relaxed text-slate-700">
+      Datasets are obtained from their original publications or public archive
+      records. Public examples such as <code>paul15</code> and
+      <code className="ml-1">pbmc3k_processed</code> are available through
+      standard Scanpy loaders; larger benchmark cohorts are resolved by the
+      experiment runners from local dataset directories.
+    </div>
+  </section>
 
-## Confidentiality note
+  <section className="my-8 max-w-3xl rounded-lg border border-slate-200 bg-slate-50 p-5">
+    <h2 className="mb-3 text-2xl font-semibold text-slate-900">Confidentiality note</h2>
+    <div className="leading-relaxed text-slate-700">
+      This site does not host raw data, cell barcodes, sample identifiers,
+      model weights, or unpublished result matrices. It documents the metadata
+      needed to understand the evaluation design.
+    </div>
+  </section>
 
-This site does not host raw data, cell barcodes, or sample identifiers.
-Curated counts and embeddings are obtained directly from upstream
-publications.
+  <NextSteps
+    items={[
+      { href: '/metrics/', label: 'Next', title: 'Metrics', description: 'Inspect the 20 metric definitions used to evaluate every latent representation.' },
+      { href: '/methods/', label: 'Then', title: 'Benchmarks', description: 'Review the benchmark families and method tracks compared against GAHIB.' },
+      { href: '/method/', label: 'Back', title: 'Method', description: 'Return to the model architecture and objective details.' },
+    ]}
+  />
+</PageBody>

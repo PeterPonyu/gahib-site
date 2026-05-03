@@ -1,70 +1,146 @@
 import { FigureCard } from '@/components/FigureCard';
+import { EmbargoNote, NextSteps, PageBody, PageHeader, SectionHeader } from '@/components/PageScaffold';
 
-# Method
+<PageHeader
+  eyebrow="Architecture"
+  title="Method"
+  summary={
+    <>
+      GAHIB fits a variational autoencoder on single-cell RNA-seq counts. The encoder can be a multilayer perceptron, a Transformer, or a graph neural network, and the latent representation is shaped by three losses that together produce a hierarchy-aware embedding.
+    </>
+  }
+>
+  <div className="space-y-3 text-sm text-slate-700">
+    <p><strong className="text-slate-950">Encoder options:</strong> MLP, Transformer, GAT, GCN, GraphSAGE, ChebConv, TAG, GraphTransformer, ARMA.</p>
+    <EmbargoNote>
+      Detailed benchmark figures remain gated; architecture and objective details are safe preview content.
+    </EmbargoNote>
+  </div>
+</PageHeader>
 
-GAHIB fits a variational autoencoder on single-cell RNA-seq counts. The
-encoder can be a multilayer perceptron, a Transformer, or a graph neural
-network (GAT, GCN, GraphSAGE, ChebConv, TAG, GraphTransformer, ARMA), and
-the latent representation is shaped by three losses that together produce a
-hierarchy-aware embedding.
+<PageBody>
+  <SectionHeader
+    eyebrow="Mechanism summary"
+    title="Graph-attention VAE with bottleneck geometry"
+    description="The first screen is text-first so the companion-site overview can show route content without repeating manuscript figures."
+  />
 
-<FigureCard
-  src="/gahib-site/figures/architecture.png"
-  alt="GAHIB architecture: graph-attention encoder, information bottleneck, hyperbolic loss"
-  caption="The encoder produces a high-dimensional latent. An information bottleneck compresses it to a 2-D manifold coordinate; a Lorentz hyperbolic loss anchors that coordinate on the hyperboloid."
-  width={1600}
-  height={1100}
-/>
+  <section className="my-8 grid gap-4 md:grid-cols-3">
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-600">Encoder</p>
+      <h2 className="mt-2 text-xl font-semibold text-slate-950">Graph-aware counts</h2>
+      <p className="mt-2 text-sm leading-relaxed text-slate-600">A graph or sequence encoder maps single-cell counts into a shared latent representation.</p>
+    </div>
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-600">Bottleneck</p>
+      <h2 className="mt-2 text-xl font-semibold text-slate-950">Compressed manifold</h2>
+      <p className="mt-2 text-sm leading-relaxed text-slate-600">A low-dimensional coordinate is trained directly instead of relying only on post-hoc projection.</p>
+    </div>
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-600">Geometry</p>
+      <h2 className="mt-2 text-xl font-semibold text-slate-950">Lorentz hierarchy</h2>
+      <p className="mt-2 text-sm leading-relaxed text-slate-600">The hyperbolic objective encourages radial hierarchy and angular lineage separation.</p>
+    </div>
+  </section>
 
-## Three losses
+  <SectionHeader
+    eyebrow="Objective"
+    title="Three coupled losses"
+    description="The objective combines count reconstruction, bottleneck reconstruction, and Lorentz geometry rather than treating visualization as a post-hoc projection."
+  />
 
-**Reconstruction.** A count likelihood — negative-binomial, zero-inflated
-negative-binomial, Poisson, or zero-inflated Poisson — fits the raw counts.
+  <section className="my-10 max-w-3xl">
+    <div className="space-y-4 text-slate-700">
+      <div>
+        <strong className="text-slate-900">Reconstruction.</strong> A count likelihood - negative-binomial,
+        zero-inflated negative-binomial, Poisson, or zero-inflated Poisson - fits the raw counts.
+      </div>
 
-**Information bottleneck.** A second decoder reconstructs the input from a
-2-D manifold coordinate, compressing the latent into a low-dimensional
-representation suitable for visualization and trajectory analysis.
+      <div>
+        <strong className="text-slate-900">Information bottleneck.</strong> A second decoder reconstructs
+        the input from a 2-D manifold coordinate, compressing the latent into a low-dimensional
+        representation suitable for visualization and trajectory analysis.
+      </div>
 
-**Lorentz hyperbolic loss.** Anchors the manifold coordinate on the
-hyperboloid model of hyperbolic space. The Lorentz distance between two
-points on the hyperboloid is
+      <div>
+        <strong className="text-slate-900">Lorentz hyperbolic loss.</strong> Anchors the manifold coordinate
+        on the hyperboloid model of hyperbolic space. Radial distance from the origin encodes hierarchy:
+        cells closer to the origin sit higher in the developmental tree, and lineage divergence maps to
+        angular separation.
+      </div>
+    </div>
+  </section>
+
+  <section className="my-8 max-w-3xl rounded-lg border border-slate-200 bg-slate-50 p-5">
+    <h2 className="mb-3 text-2xl font-semibold text-slate-900">Lorentz distance</h2>
+    <div className="leading-relaxed text-slate-700">
+      The Lorentz distance between two points on the hyperboloid is
+    </div>
 
 $$
 d_\mathcal{L}(\mathbf{u}, \mathbf{v}) = \operatorname{arcosh}(-\langle \mathbf{u}, \mathbf{v}\rangle_\mathcal{L})
 $$
 
-where the Minkowski inner product is
+    <div className="leading-relaxed text-slate-700">
+      where the Minkowski inner product is
+    </div>
 
 $$
 \langle \mathbf{u}, \mathbf{v}\rangle_\mathcal{L} = -u_0 v_0 + \sum_{i=1}^{d} u_i v_i.
 $$
+  </section>
 
-Radial distance from the origin then encodes hierarchy: cells closer to
-the origin sit higher in the developmental tree, and lineage divergence
-maps to angular separation.
+  <SectionHeader
+    eyebrow="Reference diagrams"
+    title="Manuscript figures"
+    description="These diagrams remain available for site readers below the method summary; they are excluded from the standalone site-overview composition."
+  />
 
-<FigureCard
-  src="/gahib-site/figures/overview.png"
-  alt="GAHIB overview: end-to-end pipeline"
-  caption="Pipeline overview: scRNA-seq counts → encoder → bottleneck → hyperbolic embedding."
-  width={1600}
-  height={900}
-/>
+  <FigureCard
+    src="/gahib-site/figures/architecture.png"
+    alt="GAHIB architecture: graph-attention encoder, information bottleneck, hyperbolic loss"
+    caption="The encoder produces a high-dimensional latent. An information bottleneck compresses it to a 2-D manifold coordinate; a Lorentz hyperbolic loss anchors that coordinate on the hyperboloid."
+    width={1600}
+    height={1100}
+  />
 
-## Important constraint
+  <FigureCard
+    src="/gahib-site/figures/overview.png"
+    alt="GAHIB overview: end-to-end pipeline"
+    caption="Pipeline overview: scRNA-seq counts to encoder to bottleneck to hyperbolic embedding."
+    width={1600}
+    height={900}
+  />
 
-The hyperbolic loss is degenerate when the bottleneck coordinate is
-untrained (i.e., when the bottleneck reconstruction weight is zero). The
-implementation enforces this dependency.
+  <section className="my-8 grid gap-4 md:grid-cols-2">
+    <div className="rounded-lg border border-slate-200 bg-white p-5">
+      <h2 className="mb-3 text-2xl font-semibold text-slate-900">Important constraint</h2>
+      <div className="leading-relaxed text-slate-700">
+        The hyperbolic loss is degenerate when the bottleneck coordinate is untrained.
+        The implementation enforces this dependency when the bottleneck reconstruction weight is zero.
+      </div>
+    </div>
 
-## Optional trajectory modules
+    <div className="rounded-lg border border-slate-200 bg-white p-5">
+      <h2 className="mb-3 text-2xl font-semibold text-slate-900">Optional trajectory modules</h2>
+      <div className="leading-relaxed text-slate-700">
+        Stochastic differential equation and partial differential equation modules are provided for
+        trajectory experiments. These are off by default and documented in the source.
+      </div>
+    </div>
+  </section>
 
-Stochastic differential equation (SDE) and partial differential equation
-(PDE) modules are provided for trajectory experiments. These are off by
-default and are documented in the source.
+  <div className="my-6 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+    Detailed quantitative comparisons against baselines, ablations, and
+    interpretability analyses appear in the manuscript and will be published
+    on this site upon journal acceptance.
+  </div>
 
-<div className="my-6 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-  Detailed quantitative comparisons against baselines, ablations, and
-  interpretability analyses appear in the manuscript and will be published
-  on this site upon journal acceptance.
-</div>
+  <NextSteps
+    items={[
+      { href: '/data/', label: 'Next', title: 'Datasets', description: 'See the 53-dataset evaluation cohort used to stress-test the method.' },
+      { href: '/metrics/', label: 'Score', title: 'Metrics', description: 'Review the 20 metrics used to evaluate latent representations.' },
+      { href: '/methods/', label: 'Compare', title: 'Benchmarks', description: 'Inspect the benchmark tracks that isolate model components and baselines.' },
+    ]}
+  />
+</PageBody>

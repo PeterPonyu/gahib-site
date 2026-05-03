@@ -1,23 +1,50 @@
-# Code
+import { NextSteps, PageBody, PageHeader, SectionHeader } from '@/components/PageScaffold';
 
-The reference implementation lives at
-[github.com/PeterPonyu/GAHIB](https://github.com/PeterPonyu/GAHIB).
+<PageHeader
+    eyebrow="Reference implementation"
+    title="Code"
+    summary={
+        <>
+            The PyTorch implementation is released through the GAHIB repository with a Scanpy-style workflow for single-cell AnnData inputs.
+        </>
+    }
+>
+    <a
+        href="https://github.com/PeterPonyu/GAHIB"
+        rel="noopener"
+        className="inline-flex rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white no-underline hover:bg-brand-700"
+    >
+        Open GitHub repository
+    </a>
+</PageHeader>
 
-## Install
-
-```bash
-pip install -e .
+<PageBody>
+    <section className="grid gap-4 md:grid-cols-2">
+        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <SectionHeader eyebrow="Install" title="Editable package" />
+            <pre className="overflow-x-auto rounded-md bg-slate-950 p-4 text-slate-100"><code>{`pip install -e .
 # optional extras
 pip install -e ".[all]"
-pip install -e ".[dev]"
-```
+pip install -e ".[dev]"`}</code></pre>
+            <p className="mt-3 text-sm leading-relaxed text-slate-600">Python 3.9 or later. Full dependency list is maintained in the repository package metadata.</p>
+        </div>
+        <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <SectionHeader eyebrow="Outputs" title="Model accessors" />
+            <ul className="space-y-3 text-sm text-slate-700">
+                <li><code>model.get_latent()</code> returns the learned embedding.</li>
+                <li><code>model.get_time()</code> returns the trajectory time estimate when trajectory modules are enabled.</li>
+                <li><code>model.get_centroid()</code> returns per-cluster latent centroids.</li>
+            </ul>
+        </div>
+    </section>
 
-Python 3.9 or later. Full dependency list in `pyproject.toml`.
-
-## Quick start
-
-```python
-import scanpy as sc
+    <section className="my-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <SectionHeader
+            eyebrow="Quick start"
+            title="Fit GAHIB on an AnnData object"
+            description="The graph encoder is selected explicitly; set encoder_type to mlp for a plain VAE without graph message passing."
+        />
+        <pre className="overflow-x-auto rounded-md bg-slate-950 p-4 text-slate-100"><code>{`import scanpy as sc
 from gahib import GAHIB
 
 adata = sc.read_h5ad("data/human_cd34_bone_marrow.h5ad")
@@ -34,25 +61,25 @@ model = GAHIB(
 )
 
 model.fit(epochs=200, patience=30)
-Z = model.get_latent()
-```
+Z = model.get_latent()`}</code></pre>
+    </section>
 
-Set `encoder_type="mlp"` (default) for a plain VAE without the graph
-encoder.
+    <section className="my-8 grid gap-4 md:grid-cols-2">
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-5">
+            <h2 className="text-xl font-semibold text-slate-950">Notebooks</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700">A Colab demo notebook with a frozen checkpoint will be released alongside the paper. Subscribe to the GitHub repository for the announcement.</p>
+        </div>
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-5">
+            <h2 className="text-xl font-semibold text-slate-950">License</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700">The reference implementation is distributed under the MIT License.</p>
+        </div>
+    </section>
 
-## Main outputs
-
-| Call | Returns |
-| --- | --- |
-| `model.get_latent()` | the learned embedding |
-| `model.get_time()` | the trajectory time estimate (if SDE) |
-| `model.get_centroid()` | per-cluster latent centroids |
-
-## Notebooks
-
-A Colab demo notebook with a frozen checkpoint will be released alongside
-the paper. Subscribe to the GitHub repo for the announcement.
-
-## License
-
-MIT (see `LICENSE` in the repo).
+    <NextSteps
+        items={[
+            { href: '/method/', label: 'Model', title: 'Method', description: 'Review the architecture before running experiments.' },
+            { href: '/data/', label: 'Inputs', title: 'Datasets', description: 'Match the public metadata against your local data layout.' },
+            { href: '/cite/', label: 'Credit', title: 'Cite', description: 'Copy the current citation stub and publication-state notes.' },
+        ]}
+    />
+</PageBody>

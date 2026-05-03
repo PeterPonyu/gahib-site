@@ -8,6 +8,8 @@ import { PREPUB } from '@/lib/prepub';
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '/gahib-site';
 
 export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
   themeColor: '#1d4ed8',
 };
 
@@ -23,6 +25,13 @@ export const metadata: Metadata = {
     : 'A graph-attention variational autoencoder with information bottleneck and Lorentz hyperbolic geometry for single-cell latent representation learning.',
   applicationName: 'GAHIB',
   authors: [{ name: 'Zeyu Fu' }],
+  icons: {
+    icon: [
+      { url: `${BASE_PATH}/favicon.ico`, sizes: 'any' },
+      { url: `${BASE_PATH}/favicon.svg`, type: 'image/svg+xml' },
+    ],
+    shortcut: [`${BASE_PATH}/favicon.ico`],
+  },
   robots: PREPUB
     ? { index: false, follow: false, nocache: true }
     : { index: true, follow: true },

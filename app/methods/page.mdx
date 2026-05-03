@@ -1,0 +1,64 @@
+import { MethodInventory, StudyScope } from '@/components/StudyInventory';
+import { EmbargoNote, NextSteps, PageBody, PageHeader, SectionHeader } from '@/components/PageScaffold';
+
+<PageHeader
+  eyebrow="Benchmarked methods"
+  title="Methods and benchmark tracks"
+  summary={
+    <>
+      GAHIB is compared with deep-learning baselines, classical dimensionality reduction, geometric VAE variants, disentanglement regularizers, encoder alternatives, graph convolution operators, and robustness studies.
+    </>
+  }
+>
+  <EmbargoNote>
+    The comparison design is public in preview mode; result figures and full benchmark matrices remain gated until publication.
+  </EmbargoNote>
+</PageHeader>
+
+<PageBody>
+  <StudyScope />
+
+  <section className="my-8 grid gap-4 md:grid-cols-3">
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-600">Question</p>
+      <h2 className="mt-2 text-xl font-semibold text-slate-950">What changes?</h2>
+      <p className="mt-2 text-sm leading-relaxed text-slate-600">Each track isolates either a model component, a baseline family, or a robustness condition.</p>
+    </div>
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-600">Control</p>
+      <h2 className="mt-2 text-xl font-semibold text-slate-950">What stays fixed?</h2>
+      <p className="mt-2 text-sm leading-relaxed text-slate-600">Preprocessing, dataset pairing, latent dimension, and train-validation splits remain aligned when applicable.</p>
+    </div>
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-600">Output</p>
+      <h2 className="mt-2 text-xl font-semibold text-slate-950">How is it judged?</h2>
+      <p className="mt-2 text-sm leading-relaxed text-slate-600">The shared 20-metric suite evaluates clustering, projection fidelity, and latent-space structure.</p>
+    </div>
+  </section>
+
+  <SectionHeader
+    eyebrow="Tracks"
+    title="Benchmark families"
+    description="The inventory below is intentionally method-design metadata, not unpublished result disclosure."
+  />
+
+  <MethodInventory />
+
+  <section className="my-8 max-w-3xl rounded-lg border border-slate-200 bg-slate-50 p-5">
+    <h2 className="mb-3 text-2xl font-semibold text-slate-900">Shared protocol</h2>
+    <div className="leading-relaxed text-slate-700">
+      Learned methods use the same preprocessing pipeline, train-validation
+      split, 200-epoch budget, patience of 30, and latent dimension of 10 when
+      the method exposes a latent-dimensionality setting. Classical methods use
+      their standard decomposition defaults under the same input matrix.
+    </div>
+  </section>
+
+  <NextSteps
+    items={[
+      { href: '/metrics/', label: 'Metrics', title: 'Evaluation suite', description: 'Review how each benchmark output is scored.' },
+      { href: '/method/', label: 'Model', title: 'GAHIB architecture', description: 'See the model components that the ablations isolate.' },
+      { href: '/code/', label: 'Run', title: 'Code', description: 'Use the reference implementation and experiment entry points.' },
+    ]}
+  />
+</PageBody>

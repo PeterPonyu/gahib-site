@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // Layer 5: post-build artifact scan.
 // Greps the static export at out/ for:
-//   (a) any postpub filename when in prepub mode (catches webpack-alias regressions)
-//   (b) the literal string `_content` in chunk filenames (catches MDX-import leaks)
-//   (c) any embargoed_substring in any HTML/JS/JSON file
+//   (a) nested paragraph markup in HTML (catches MDX JSX wrappers like <p><p>...)
+//   (b) any postpub filename when in prepub mode (catches webpack-alias regressions)
+//   (c) the literal string `_content` in chunk filenames (catches MDX-import leaks)
+//   (d) any embargoed_substring in any HTML/JS/JSON file
 // Run after `next build` (postbuild hook) AND in CI as separate step.
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
@@ -13,6 +14,7 @@ const PREPUB = process.env.NEXT_PUBLIC_PREPUB !== 'false';
 const root = process.cwd();
 const outDir = join(root, 'out');
 const publishPath = join(root, 'content', 'PUBLISH.json');
+const paragraphTagPattern = /<\/?p(?:\s[^>]*)?>/gi;
 
 const publish = JSON.parse(readFileSync(publishPath, 'utf8'));
 
@@ -36,7 +38,42 @@ try { outFiles = [...walk(outDir)]; } catch (err) {
 
 let violations = 0;
 
-// (a) and (b): chunk filename checks
+function findNestedParagraph(content) {
+  paragraphTagPattern.lastIndex = 0;
+  let openParagraphIndex = -1;
+
+  for (const match of content.matchAll(paragraphTagPattern)) {
+    const tag = match[0];
+    const index = match.index ?? 0;
+
+    if (tag.startsWith('</')) {
+      openParagraphIndex = -1;
+      continue;
+    }
+
+    if (openParagraphIndex !== -1) {
+      return content.slice(openParagraphIndex, Math.min(index + tag.length + 80, content.length));
+    }
+
+    openParagraphIndex = index;
+  }
+
+  return null;
+}
+
+for (const f of outFiles) {
+  if (!f.endsWith('.html')) continue;
+  const rel = f.slice(outDir.length + 1);
+
+  const content = readFileSync(f, 'utf8');
+  const nestedParagraph = findNestedParagraph(content);
+  if (!nestedParagraph) continue;
+
+  console.error(`check-output: REJECT ${rel} — contains nested paragraph markup ${JSON.stringify(nestedParagraph)}`);
+  violations += 1;
+}
+
+// (b) and (c): chunk filename checks
 for (const f of outFiles) {
   const rel = f.slice(outDir.length + 1);
   if (PREPUB) {
@@ -54,7 +91,7 @@ for (const f of outFiles) {
   }
 }
 
-// (c): substring grep for HTML/JS/JSON contents
+// (d): substring grep for HTML/JS/JSON contents
 const textExt = new Set(['.html', '.js', '.mjs', '.cjs', '.json', '.txt', '.xml', '.svg']);
 if (PREPUB) {
   for (const f of outFiles) {
