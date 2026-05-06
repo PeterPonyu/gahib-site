@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://peterponyu.github.io'),
   title: PREPUB ? 'GAHIB' : 'GAHIB — graph-attention VAE with hyperbolic geometry',
   description: PREPUB
-    ? 'GAHIB project page (pre-publication preview).'
+    ? 'Graph-attention single-cell embeddings in Lorentz hyperbolic space, with method notes, datasets, metrics, and code.'
     : 'A graph-attention variational autoencoder with information bottleneck and Lorentz hyperbolic geometry for single-cell latent representation learning.',
   applicationName: 'GAHIB',
   authors: [{ name: 'Zeyu Fu' }],
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: PREPUB ? 'GAHIB' : 'GAHIB — graph-attention VAE with hyperbolic geometry',
     description: PREPUB
-      ? 'GAHIB project page (pre-publication preview).'
+      ? 'Graph-attention single-cell embeddings in Lorentz hyperbolic space, with method notes, datasets, metrics, and code.'
       : 'Single-cell graph-attention VAE with information bottleneck and Lorentz hyperbolic geometry.',
     url: `${BASE_PATH}/`,
     siteName: 'GAHIB',
@@ -55,7 +55,9 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: PREPUB ? 'GAHIB' : 'GAHIB — graph-attention VAE with hyperbolic geometry',
-    description: PREPUB ? 'Pre-publication preview.' : 'Single-cell representation learning.',
+    description: PREPUB
+      ? 'Graph-attention single-cell embeddings in Lorentz hyperbolic space, with method notes, datasets, metrics, and code.'
+      : 'Single-cell representation learning.',
     images: [`${BASE_PATH}/figures/architecture.png`],
   },
 };

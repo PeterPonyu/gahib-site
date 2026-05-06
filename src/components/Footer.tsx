@@ -10,42 +10,42 @@ const internalRoutes: FooterRoute[] = [
   {
     href: '/',
     label: 'Home',
-    description: 'Preview-safe project overview and public route context.',
+    description: 'Project overview.',
   },
   {
     href: '/method/',
     label: 'Method',
-    description: 'Model objective, graph attention, and hyperbolic geometry notes.',
+    description: 'Model and objective.',
   },
   {
     href: '/data/',
     label: 'Data',
-    description: 'Public cohort inventory and preprocessing summary.',
+    description: 'Datasets and preprocessing.',
   },
   {
     href: '/metrics/',
     label: 'Metrics',
-    description: 'Evaluation definitions and paired-testing policy.',
+    description: 'Scoring definitions.',
   },
   {
     href: '/methods/',
     label: 'Benchmarks',
-    description: 'Compared method families and benchmark tracks.',
+    description: 'Methods and tracks.',
   },
   {
     href: '/code/',
     label: 'Code',
-    description: 'Reference implementation, install notes, and repository link.',
+    description: 'Repo and setup.',
   },
   {
     href: '/cite/',
     label: 'Cite',
-    description: 'Current unpublished citation metadata.',
+    description: 'Citation info.',
   },
   {
     href: '/team/',
     label: 'Team',
-    description: 'Author, lab context, and contact routes.',
+    description: 'Authors and contact.',
   },
 ];
 
@@ -53,22 +53,22 @@ const externalLinks: FooterRoute[] = [
   {
     href: 'https://peterponyu.github.io/',
     label: 'PeterPonyu homepage',
-    description: 'Lab route graph and related project surfaces.',
+    description: 'ZF Lab site.',
   },
   {
     href: 'https://peterponyu.github.io/scportal/',
     label: 'SCPortal',
-    description: 'Single-cell discovery hub for datasets, methods, and benchmarks.',
+    description: 'Single-cell portal.',
   },
   {
     href: 'https://github.com/PeterPonyu/GAHIB',
     label: 'GAHIB repository',
-    description: 'MIT-licensed source code and issue tracker.',
+    description: 'Source code.',
   },
   {
     href: 'https://peterponyu.github.io/scccvgben-next/',
     label: 'scCCVGBen',
-    description: 'External benchmark explorer for single-cell comparison context.',
+    description: 'Benchmark browser.',
   },
 ];
 
@@ -79,12 +79,12 @@ export function Footer() {
         <div>
           <p className="font-serif text-base font-semibold text-slate-900">GAHIB</p>
           <p className="mt-1 text-sm text-slate-600">
-            Single-cell graph-attention VAE with information bottleneck and hyperbolic geometry.
+            Graph-attention single-cell embeddings in Lorentz hyperbolic space.
           </p>
         </div>
         <div className="grid gap-8 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
           <div className="text-sm">
-            <p className="mb-3 font-medium text-slate-700">Project routes</p>
+            <p className="mb-3 font-medium text-slate-700">Browse GAHIB</p>
             <ul className="grid gap-3 sm:grid-cols-2">
               {internalRoutes.map((route) => (
                 <li key={route.href}>
@@ -104,7 +104,7 @@ export function Footer() {
             </ul>
           </div>
           <div className="text-sm">
-            <p className="mb-3 font-medium text-slate-700">External context</p>
+            <p className="mb-3 font-medium text-slate-700">Related links</p>
             <ul className="space-y-3">
               {externalLinks.map((link) => (
                 <li key={link.href}>
@@ -131,7 +131,7 @@ export function Footer() {
         <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-3 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <span>Code: MIT License · Content: CC BY 4.0 · Built with Next.js · Deployed on GitHub Pages.</span>
           <Link href="/results/" className="inline-flex min-h-11 items-center rounded-md px-2 text-amber-700 no-underline hover:bg-amber-100 hover:text-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
-            Results status: gated until journal acceptance.
+            Results not yet available
           </Link>
         </div>
       </div>

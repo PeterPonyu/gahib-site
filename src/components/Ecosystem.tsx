@@ -17,30 +17,30 @@ type RelatedLink = {
 const networkNodes: NetworkNode[] = [
   {
     name: 'Homepage',
-    role: 'Identity root',
+    role: 'ZF Lab home',
     href: 'https://peterponyu.github.io/',
-    description: 'Curated public route graph for ZF Lab projects and publication surfaces.',
+    description: 'ZF Lab projects, papers, and related links.',
     badge: 'public index',
   },
   {
     name: 'SCPortal',
     role: 'Discovery hub',
     href: 'https://peterponyu.github.io/scportal/',
-    description: 'Single-cell hub that points readers to datasets, benchmarks, models, and companion sites.',
+    description: 'Single-cell datasets, benchmarks, models, and companion sites.',
     badge: 'hub',
   },
   {
     name: 'GAHIB',
-    role: 'Companion site',
+    role: 'Project site',
     href: '/',
-    description: 'Metadata-first preview for graph-attention VAE methods, metrics, data, and code.',
-    badge: 'noindex preview',
+    description: 'Method, data, metrics, and code for the GAHIB project.',
+    badge: 'project site',
   },
   {
     name: 'GAHIB repository',
-    role: 'Implementation',
+    role: 'Code',
     href: 'https://github.com/PeterPonyu/GAHIB',
-    description: 'MIT-licensed PyTorch source, package metadata, and reproducible experiment entry points.',
+    description: 'MIT-licensed PyTorch source and experiment entry points.',
     badge: 'code',
   },
 ];
@@ -49,12 +49,12 @@ const relatedLinks: RelatedLink[] = [
   {
     name: 'LAIOR Benchmarks',
     href: 'https://peterponyu.github.io/liora-ui/',
-    detail: 'Benchmark dashboard patterns and metric reference surfaces.',
+    detail: 'Benchmark dashboard and metric references.',
   },
   {
     name: 'iAODE Pages',
     href: 'https://peterponyu.github.io/iAODE/',
-    detail: 'Single-cell dataset browser and public project pages.',
+    detail: 'Single-cell dataset browser and project pages.',
   },
   {
     name: 'scCCVGBen',
@@ -75,24 +75,23 @@ export function Ecosystem() {
         <div className="mb-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-end">
           <div>
             <span className="mb-2 block font-mono text-xs font-medium uppercase tracking-widest text-brand-600">
-              Project network
+              Related work
             </span>
             <h2 className="text-2xl font-semibold text-slate-900">
-              Where GAHIB sits in the public single-cell graph
+              GAHIB and related single-cell resources
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-600">
-              GAHIB is linked from the PeterPonyu route graph and SCPortal as a
-              companion method site. The public surface stays metadata-first in
-              preview mode: datasets, metrics, benchmark design, method details,
-              code, and citation state are visible; gated quantitative result
-              pages are not promoted here.
+              GAHIB connects to the PeterPonyu homepage and SCPortal alongside
+              related single-cell method and benchmark resources. These links
+              place the project in a broader dataset, benchmark, and code
+              context.
             </p>
           </div>
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-950">
-            <p className="font-semibold">Publication boundary</p>
+            <p className="font-semibold">How to use these links</p>
             <p className="mt-1">
-              Homepage discovery is allowed, but indexing and sitemap inclusion
-              remain disabled for GAHIB while the site is in preview mode.
+              GAHIB is the project-specific site; the other links point to
+              broader lab, dataset, and benchmark resources.
             </p>
           </div>
         </div>
@@ -115,7 +114,7 @@ export function Ecosystem() {
                   {node.description}
                 </p>
                 <span className="mt-4 text-sm font-medium text-brand-700 group-hover:underline">
-                  Open route {'->'}
+                  Open link
                 </span>
               </>
             );
@@ -146,15 +145,15 @@ export function Ecosystem() {
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-600">
-                Related surfaces
+                Related resources
               </p>
               <h3 className="mt-2 text-xl font-semibold text-slate-950">
                 Single-cell methods and benchmark context
               </h3>
             </div>
             <p className="max-w-md text-sm leading-relaxed text-slate-600">
-              These links provide neighboring context without duplicating GAHIB
-              manuscript figures or unpublished result matrices.
+              These links give context for the method and benchmarks across
+              related single-cell projects.
             </p>
           </div>
           <ul className="grid gap-3 md:grid-cols-2">

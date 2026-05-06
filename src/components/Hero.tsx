@@ -68,24 +68,24 @@ export function Hero() {
         <div className="md:col-span-2">
           <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <p className="font-mono text-xs font-medium uppercase tracking-widest text-brand-600">
-              Companion-site map
+              Available on this site
             </p>
-            <h2 className="mt-3 text-2xl font-semibold text-slate-950">Metadata-first preview</h2>
+            <h2 className="mt-3 text-2xl font-semibold text-slate-950">Method, data, metrics, and code</h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-600">
-              The live site documents the evaluation cohort, metric suite, benchmark tracks, code entry points, and release state without duplicating the manuscript result figures.
+              Method notes, datasets, metrics, and code are available here.
             </p>
             <div className="mt-5 grid gap-2 text-sm">
               <Link href="/data/" className="inline-flex min-h-11 items-center rounded-md border border-slate-200 bg-slate-50 px-3 no-underline hover:border-brand-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
                 <span className="font-semibold text-slate-950">/data</span>
-                <span className="ml-2 text-slate-600">53-dataset inventory</span>
+                <span className="ml-2 text-slate-600">53 datasets</span>
               </Link>
               <Link href="/metrics/" className="inline-flex min-h-11 items-center rounded-md border border-slate-200 bg-slate-50 px-3 no-underline hover:border-brand-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
                 <span className="font-semibold text-slate-950">/metrics</span>
-                <span className="ml-2 text-slate-600">20 metric definitions</span>
+                <span className="ml-2 text-slate-600">20 metrics</span>
               </Link>
               <Link href="/methods/" className="inline-flex min-h-11 items-center rounded-md border border-slate-200 bg-slate-50 px-3 no-underline hover:border-brand-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
                 <span className="font-semibold text-slate-950">/methods</span>
-                <span className="ml-2 text-slate-600">benchmark design</span>
+                <span className="ml-2 text-slate-600">11 benchmark tracks</span>
               </Link>
             </div>
           </div>
