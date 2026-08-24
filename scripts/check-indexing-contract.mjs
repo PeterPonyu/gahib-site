@@ -12,15 +12,88 @@ function attributeValue(tag, attribute) {
   return match?.[1];
 }
 
+function tagEnd(indexHtml, start) {
+  let quote;
+
+  for (let index = start + 1; index < indexHtml.length; index += 1) {
+    const character = indexHtml[index];
+    if (quote) {
+      if (character === quote) quote = undefined;
+    } else if (character === '"' || character === "'") {
+      quote = character;
+    } else if (character === '>') {
+      return index;
+    }
+  }
+
+  return -1;
+}
+
+function liveHeadTags(indexHtml) {
+  const tags = [];
+  const inertElements = new Set(['script', 'style', 'template', 'noscript', 'title', 'textarea']);
+  let cursor = 0;
+  let inHead = false;
+  let inertElement;
+
+  while (cursor < indexHtml.length) {
+    if (inertElement) {
+      const closingTag = new RegExp(`<\\s*/\\s*${inertElement}\\s*>`, 'ig');
+      closingTag.lastIndex = cursor;
+      const match = closingTag.exec(indexHtml);
+      if (!match) break;
+      cursor = match.index + match[0].length;
+      inertElement = undefined;
+      continue;
+    }
+
+    if (indexHtml.startsWith('<!--', cursor)) {
+      const commentEnd = indexHtml.indexOf('-->', cursor + 4);
+      cursor = commentEnd === -1 ? indexHtml.length : commentEnd + 3;
+      continue;
+    }
+
+    const start = indexHtml.indexOf('<', cursor);
+    if (start === -1) break;
+    const end = tagEnd(indexHtml, start);
+    if (end === -1) break;
+    const tag = indexHtml.slice(start, end + 1);
+    cursor = end + 1;
+
+    const match = tag.match(/^<\s*(\/?)\s*([a-z][\w:-]*)\b/i);
+    if (!match) continue;
+
+    const [, closing, rawName] = match;
+    const name = rawName.toLowerCase();
+    if (closing) {
+      if (name === 'head') inHead = false;
+      continue;
+    }
+
+    if (inertElements.has(name)) {
+      inertElement = name;
+      continue;
+    }
+    if (name === 'head') {
+      inHead = true;
+      continue;
+    }
+    if (inHead) tags.push(tag);
+  }
+
+  return tags;
+}
+
 function robotsMetadata(indexHtml) {
-  const tags = [...indexHtml.matchAll(/<meta\b[^>]*>/gi)];
-  const robotsTags = tags.filter(([tag]) => attributeValue(tag, 'name')?.toLowerCase() === 'robots');
+  const robotsTags = liveHeadTags(indexHtml)
+    .filter((tag) => /^<\s*meta\b/i.test(tag))
+    .filter((tag) => attributeValue(tag, 'name')?.toLowerCase() === 'robots');
 
   if (robotsTags.length !== 1) {
     throw new Error(`indexing contract failed: out/index.html must contain exactly one robots meta tag; found ${robotsTags.length}`);
   }
 
-  const content = attributeValue(robotsTags[0][0], 'content');
+  const content = attributeValue(robotsTags[0], 'content');
   if (!content) {
     throw new Error('indexing contract failed: robots meta tag must have content');
   }
@@ -49,6 +122,11 @@ function robotsDirectives(robotsTxt) {
   const wildcardBlocks = blocks.filter(({ userAgent }) => userAgent === '*');
   if (wildcardBlocks.length !== 1) {
     throw new Error(`indexing contract failed: out/robots.txt must contain exactly one User-agent: * block; found ${wildcardBlocks.length}`);
+  }
+
+  const policyBlocks = blocks.filter(({ directives }) => directives.length > 0);
+  if (policyBlocks.length !== 1 || policyBlocks[0] !== wildcardBlocks[0]) {
+    throw new Error('indexing contract failed: out/robots.txt may contain Allow/Disallow rules only in its User-agent: * block');
   }
 
   return wildcardBlocks[0].directives;
@@ -86,21 +164,32 @@ function assertRejects(name, validate) {
 }
 
 function runSelfTest() {
-  const prepubHtml = '<meta name="robots" content="noindex, nofollow, nocache">';
-  const publishedHtml = '<meta name="robots" content="index, follow">';
+  const prepubMeta = '<meta name="robots" content="noindex, nofollow, nocache">';
+  const publishedMeta = '<meta name="robots" content="index, follow">';
+  const htmlDocument = (head) => `<html><head>${head}</head><body></body></html>`;
+  const prepubHtml = htmlDocument(prepubMeta);
+  const publishedHtml = htmlDocument(publishedMeta);
   const prepubRobots = 'User-agent: *\nDisallow: /\n';
   const publishedRobots = 'User-agent: *\nAllow: /\n';
 
   validateArtifacts('prepub', prepubHtml, prepubRobots);
   validateArtifacts('published', publishedHtml, publishedRobots);
   assertRejects('contradictory HTML in prepub mode', () =>
-    validateArtifacts('prepub', `${prepubHtml}${publishedHtml}`, prepubRobots));
+    validateArtifacts('prepub', htmlDocument(`${prepubMeta}${publishedMeta}`), prepubRobots));
   assertRejects('contradictory HTML in published mode', () =>
-    validateArtifacts('published', `${publishedHtml}${prepubHtml}`, publishedRobots));
+    validateArtifacts('published', htmlDocument(`${publishedMeta}${prepubMeta}`), publishedRobots));
+  assertRejects('comment-only robots metadata', () =>
+    validateArtifacts('prepub', htmlDocument(`<!-- ${prepubMeta} -->`), prepubRobots));
+  assertRejects('robots-like tags in inert head content', () =>
+    validateArtifacts('prepub', htmlDocument(`<script>${prepubMeta}</script><style>${prepubMeta}</style><template>${prepubMeta}</template><noscript>${prepubMeta}</noscript><title>${prepubMeta}</title><textarea>${prepubMeta}</textarea>`), prepubRobots));
   assertRejects('contradictory robots.txt in prepub mode', () =>
     validateArtifacts('prepub', prepubHtml, `${prepubRobots}Allow: /\n`));
   assertRejects('contradictory robots.txt in published mode', () =>
     validateArtifacts('published', publishedHtml, `${publishedRobots}Disallow: /\n`));
+  assertRejects('specific-agent published override in prepub mode', () =>
+    validateArtifacts('prepub', prepubHtml, `${prepubRobots}User-agent: Googlebot\nAllow: /\n`));
+  assertRejects('specific-agent prepub override in published mode', () =>
+    validateArtifacts('published', publishedHtml, `${publishedRobots}User-agent: Googlebot\nDisallow: /\n`));
 
   console.log('indexing contract self-test: OK');
 }
