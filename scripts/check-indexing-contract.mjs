@@ -7,11 +7,6 @@ const expectedForMode = (mode) => mode === 'prepub'
   ? { metadata: ['noindex', 'nofollow', 'nocache'], directive: 'disallow' }
   : { metadata: ['index', 'follow'], directive: 'allow' };
 
-function attributeValue(tag, attribute) {
-  const match = tag.match(new RegExp(`\\b${attribute}\\s*=\\s*["']([^"']+)["']`, 'i'));
-  return match?.[1];
-}
-
 function tagEnd(indexHtml, start) {
   let quote;
 
@@ -29,56 +24,97 @@ function tagEnd(indexHtml, start) {
   return -1;
 }
 
+function parseTag(indexHtml, start) {
+  const end = tagEnd(indexHtml, start);
+  if (end === -1) return undefined;
+
+  const source = indexHtml.slice(start, end + 1);
+  const match = source.match(/^<\s*(\/?)\s*([a-z][\w:-]*)(?=\s|\/?>)/i);
+  if (!match) return { end, source };
+
+  const [, closing, rawName] = match;
+  const attributeSource = source.slice(match[0].length, source.endsWith('/>') ? -2 : -1);
+  const attributes = new Map();
+  const duplicateAttributes = new Set();
+  const attributePattern = /\s+([^\s=/>]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>]+)))?/g;
+
+  for (const attributeMatch of attributeSource.matchAll(attributePattern)) {
+    const name = attributeMatch[1].toLowerCase();
+    if (attributes.has(name)) duplicateAttributes.add(name);
+    attributes.set(name, attributeMatch[2] ?? attributeMatch[3] ?? attributeMatch[4] ?? '');
+  }
+
+  return {
+    end,
+    source,
+    name: rawName.toLowerCase(),
+    closing: Boolean(closing),
+    attributes,
+    duplicateAttributes,
+  };
+}
+
+function attributeValue(tag, attribute) {
+  const normalizedAttribute = attribute.toLowerCase();
+  if (tag.duplicateAttributes.has(normalizedAttribute)) return undefined;
+  return tag.attributes.get(normalizedAttribute);
+}
+
 function liveHeadTags(indexHtml) {
   const tags = [];
-  const inertElements = new Set(['script', 'style', 'template', 'noscript', 'title', 'textarea']);
+  const rawTextElements = new Set(['script', 'style', 'noscript', 'title', 'textarea', 'xmp', 'iframe', 'noembed', 'noframes']);
   let cursor = 0;
   let inHead = false;
-  let inertElement;
+  let templateDepth = 0;
+  let rawTextElement;
 
   while (cursor < indexHtml.length) {
-    if (inertElement) {
-      const closingTag = new RegExp(`<\\s*/\\s*${inertElement}\\s*>`, 'ig');
+    if (rawTextElement) {
+      const closingTag = new RegExp(`<\\s*/\\s*${rawTextElement}(?=\\s|>)[^>]*>`, 'ig');
       closingTag.lastIndex = cursor;
       const match = closingTag.exec(indexHtml);
       if (!match) break;
       cursor = match.index + match[0].length;
-      inertElement = undefined;
-      continue;
-    }
-
-    if (indexHtml.startsWith('<!--', cursor)) {
-      const commentEnd = indexHtml.indexOf('-->', cursor + 4);
-      cursor = commentEnd === -1 ? indexHtml.length : commentEnd + 3;
+      rawTextElement = undefined;
       continue;
     }
 
     const start = indexHtml.indexOf('<', cursor);
     if (start === -1) break;
-    const end = tagEnd(indexHtml, start);
-    if (end === -1) break;
-    const tag = indexHtml.slice(start, end + 1);
-    cursor = end + 1;
-
-    const match = tag.match(/^<\s*(\/?)\s*([a-z][\w:-]*)\b/i);
-    if (!match) continue;
-
-    const [, closing, rawName] = match;
-    const name = rawName.toLowerCase();
-    if (closing) {
-      if (name === 'head') inHead = false;
+    if (indexHtml.startsWith('<!--', start)) {
+      const commentEnd = indexHtml.indexOf('-->', start + 4);
+      cursor = commentEnd === -1 ? indexHtml.length : commentEnd + 3;
       continue;
     }
 
-    if (inertElements.has(name)) {
-      inertElement = name;
+    const tag = parseTag(indexHtml, start);
+    if (!tag) break;
+    cursor = tag.end + 1;
+    if (!tag.name) continue;
+
+    if (tag.closing) {
+      if (tag.name === 'template' && templateDepth > 0) templateDepth -= 1;
+      if (tag.name === 'head' && templateDepth === 0) inHead = false;
       continue;
     }
-    if (name === 'head') {
+
+    if (rawTextElements.has(tag.name)) {
+      rawTextElement = tag.name;
+      continue;
+    }
+    if (tag.name === 'template') {
+      templateDepth += 1;
+      continue;
+    }
+    if (tag.name === 'head' && templateDepth === 0) {
       inHead = true;
       continue;
     }
-    if (inHead) tags.push(tag);
+    if (tag.name === 'body' && templateDepth === 0) {
+      inHead = false;
+      continue;
+    }
+    if (inHead && templateDepth === 0) tags.push(tag);
   }
 
   return tags;
@@ -86,7 +122,7 @@ function liveHeadTags(indexHtml) {
 
 function robotsMetadata(indexHtml) {
   const robotsTags = liveHeadTags(indexHtml)
-    .filter((tag) => /^<\s*meta\b/i.test(tag))
+    .filter((tag) => tag.name === 'meta')
     .filter((tag) => attributeValue(tag, 'name')?.toLowerCase() === 'robots');
 
   if (robotsTags.length !== 1) {
@@ -180,8 +216,18 @@ function runSelfTest() {
     validateArtifacts('published', htmlDocument(`${publishedMeta}${prepubMeta}`), publishedRobots));
   assertRejects('comment-only robots metadata', () =>
     validateArtifacts('prepub', htmlDocument(`<!-- ${prepubMeta} -->`), prepubRobots));
-  assertRejects('robots-like tags in inert head content', () =>
-    validateArtifacts('prepub', htmlDocument(`<script>${prepubMeta}</script><style>${prepubMeta}</style><template>${prepubMeta}</template><noscript>${prepubMeta}</noscript><title>${prepubMeta}</title><textarea>${prepubMeta}</textarea>`), prepubRobots));
+  assertRejects('raw-text robots metadata', () =>
+    validateArtifacts('prepub', htmlDocument(`<script>${prepubMeta}</script>`), prepubRobots));
+  assertRejects('nested template robots metadata', () =>
+    validateArtifacts('prepub', htmlDocument(`<template><template></template>${prepubMeta}</template>`), prepubRobots));
+  assertRejects('comment transition robots metadata', () =>
+    validateArtifacts('prepub', htmlDocument(` \n<!-- harmless > ${prepubMeta} -->`), prepubRobots));
+  assertRejects('data-name robots metadata', () =>
+    validateArtifacts('prepub', htmlDocument('<meta data-name="robots" content="noindex, nofollow, nocache">'), prepubRobots));
+  assertRejects('meta-data custom element', () =>
+    validateArtifacts('prepub', htmlDocument('<meta-data name="robots" content="noindex, nofollow, nocache">'), prepubRobots));
+  assertRejects('robots metadata after implicit head closure', () =>
+    validateArtifacts('prepub', `<html><head><body>${prepubMeta}</body></html>`, prepubRobots));
   assertRejects('contradictory robots.txt in prepub mode', () =>
     validateArtifacts('prepub', prepubHtml, `${prepubRobots}Allow: /\n`));
   assertRejects('contradictory robots.txt in published mode', () =>
