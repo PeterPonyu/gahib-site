@@ -49,6 +49,14 @@ jobs:
       - name: Build static export
         run: pnpm build
 
+      - name: Verify indexing artifact contract
+        run: |
+          if [ "${{ vars.NEXT_PUBLIC_PREPUB || 'true' }}" = "false" ]; then
+            pnpm run check:indexing -- --mode published
+          else
+            pnpm run check:indexing -- --mode prepub
+          fi
+
       - name: Confidentiality gate — post-build artifact scan
         run: pnpm run check:output
 

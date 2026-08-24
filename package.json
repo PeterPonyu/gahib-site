@@ -18,7 +18,8 @@
     "typecheck": "tsc --noEmit",
     "check:figures": "node scripts/check-figures.mjs",
     "check:mdx-refs": "node scripts/check-mdx-refs.mjs",
-    "check:output": "node scripts/check-output.mjs"
+    "check:output": "node scripts/check-output.mjs",
+    "check:indexing": "node scripts/check-indexing-contract.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
