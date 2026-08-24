@@ -3,6 +3,7 @@ import '@/styles/globals.css';
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
 import { PrePubBanner } from '@/components/PrePubBanner';
+import { ROBOTS_METADATA } from '@/lib/indexing';
 import { PREPUB } from '@/lib/prepub';
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '/gahib-site';
@@ -32,9 +33,7 @@ export const metadata: Metadata = {
     ],
     shortcut: [`${BASE_PATH}/favicon.ico`],
   },
-  robots: PREPUB
-    ? { index: false, follow: false, nocache: true }
-    : { index: true, follow: true },
+  robots: ROBOTS_METADATA,
   openGraph: {
     title: PREPUB ? 'GAHIB' : 'GAHIB — graph-attention VAE with hyperbolic geometry',
     description: PREPUB

@@ -1,10 +1,10 @@
 import type { MetadataRoute } from 'next';
-import { PREPUB } from '@/lib/prepub';
+import { INDEXING_MODE } from '@/lib/indexing';
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '/gahib-site';
 
 export default function robots(): MetadataRoute.Robots {
-  if (PREPUB) {
+  if (INDEXING_MODE === 'noindex_nofollow') {
     return {
       rules: {
         userAgent: '*',
