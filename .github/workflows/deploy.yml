@@ -50,9 +50,9 @@ jobs:
       - name: Verify indexing artifact contract
         run: |
           if [ "${{ vars.NEXT_PUBLIC_PREPUB || 'true' }}" = "false" ]; then
-            pnpm run check:indexing -- --mode published
+            pnpm run check:indexing --mode published
           else
-            pnpm run check:indexing -- --mode prepub
+            pnpm run check:indexing --mode prepub
           fi
 
       - name: Confidentiality gate — post-build artifact scan
