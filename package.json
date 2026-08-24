@@ -19,7 +19,8 @@
     "check:figures": "node scripts/check-figures.mjs",
     "check:mdx-refs": "node scripts/check-mdx-refs.mjs",
     "check:output": "node scripts/check-output.mjs",
-    "check:indexing": "node scripts/check-indexing-contract.mjs"
+    "check:indexing": "node scripts/check-indexing-contract.mjs",
+    "test:indexing": "node scripts/check-indexing-contract.mjs --self-test"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
