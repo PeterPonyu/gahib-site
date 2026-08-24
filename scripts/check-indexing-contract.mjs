@@ -4,8 +4,10 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const expectedForMode = (mode) => mode === 'prepub'
-  ? { metadata: ['noindex', 'nofollow', 'nocache'], directive: 'disallow' }
-  : { metadata: ['index', 'follow'], directive: 'allow' };
+  ? { metadata: ['noindex', 'nofollow', 'nocache'], directive: 'disallow', sitemapVisible: false }
+  : { metadata: ['index', 'follow'], directive: 'allow', sitemapVisible: true };
+
+const canonicalUrl = 'https://peterponyu.github.io/gahib-site/';
 
 function tagEnd(indexHtml, start) {
   let quote;
@@ -180,7 +182,19 @@ function assertExactSet(actual, expected, artifact) {
   }
 }
 
-function validateArtifacts(mode, indexHtml, robotsTxt) {
+function validateSitemap(mode, sitemapXml) {
+  const expected = expectedForMode(mode);
+  if (typeof sitemapXml !== 'string' || !sitemapXml.includes('<?xml') || !sitemapXml.includes('<urlset')) {
+    throw new Error('indexing contract failed: out/sitemap.xml must be a valid XML sitemap document');
+  }
+
+  const canonicalVisible = sitemapXml.includes(canonicalUrl);
+  if (canonicalVisible !== expected.sitemapVisible) {
+    throw new Error(`indexing contract failed: out/sitemap.xml must ${expected.sitemapVisible ? 'include' : 'exclude'} ${canonicalUrl}`);
+  }
+}
+
+function validateArtifacts(mode, indexHtml, robotsTxt, sitemapXml) {
   const expected = expectedForMode(mode);
   assertExactSet(robotsMetadata(indexHtml), expected.metadata, 'out/index.html robots metadata');
 
@@ -188,6 +202,8 @@ function validateArtifacts(mode, indexHtml, robotsTxt) {
   if (directives.length !== 1 || directives[0].name !== expected.directive || directives[0].value !== '/') {
     throw new Error(`indexing contract failed: out/robots.txt User-agent: * block must contain only ${expected.directive === 'allow' ? 'Allow' : 'Disallow'}: /`);
   }
+
+  validateSitemap(mode, sitemapXml);
 }
 
 function assertRejects(name, validate) {
@@ -207,35 +223,40 @@ function runSelfTest() {
   const publishedHtml = htmlDocument(publishedMeta);
   const prepubRobots = 'User-agent: *\nDisallow: /\n';
   const publishedRobots = 'User-agent: *\nAllow: /\n';
+  const emptySitemap = '<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>';
+  const publishedSitemap = `<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${canonicalUrl}</loc></url></urlset>`;
 
-  validateArtifacts('prepub', prepubHtml, prepubRobots);
-  validateArtifacts('published', publishedHtml, publishedRobots);
+  validateArtifacts('prepub', prepubHtml, prepubRobots, emptySitemap);
+  validateArtifacts('published', publishedHtml, publishedRobots, publishedSitemap);
   assertRejects('contradictory HTML in prepub mode', () =>
-    validateArtifacts('prepub', htmlDocument(`${prepubMeta}${publishedMeta}`), prepubRobots));
+    validateArtifacts('prepub', htmlDocument(`${prepubMeta}${publishedMeta}`), prepubRobots, emptySitemap));
   assertRejects('contradictory HTML in published mode', () =>
-    validateArtifacts('published', htmlDocument(`${publishedMeta}${prepubMeta}`), publishedRobots));
+    validateArtifacts('published', htmlDocument(`${publishedMeta}${prepubMeta}`), publishedRobots, publishedSitemap));
   assertRejects('comment-only robots metadata', () =>
-    validateArtifacts('prepub', htmlDocument(`<!-- ${prepubMeta} -->`), prepubRobots));
+    validateArtifacts('prepub', htmlDocument(`<!-- ${prepubMeta} -->`), prepubRobots, emptySitemap));
   assertRejects('raw-text robots metadata', () =>
-    validateArtifacts('prepub', htmlDocument(`<script>${prepubMeta}</script>`), prepubRobots));
+    validateArtifacts('prepub', htmlDocument(`<script>${prepubMeta}</script>`), prepubRobots, emptySitemap));
   assertRejects('nested template robots metadata', () =>
-    validateArtifacts('prepub', htmlDocument(`<template><template></template>${prepubMeta}</template>`), prepubRobots));
+    validateArtifacts('prepub', htmlDocument(`<template><template></template>${prepubMeta}</template>`), prepubRobots, emptySitemap));
   assertRejects('comment transition robots metadata', () =>
-    validateArtifacts('prepub', htmlDocument(` \n<!-- harmless > ${prepubMeta} -->`), prepubRobots));
+    validateArtifacts('prepub', htmlDocument(` \n<!-- harmless > ${prepubMeta} -->`), prepubRobots, emptySitemap));
   assertRejects('data-name robots metadata', () =>
-    validateArtifacts('prepub', htmlDocument('<meta data-name="robots" content="noindex, nofollow, nocache">'), prepubRobots));
+    validateArtifacts('prepub', htmlDocument('<meta data-name="robots" content="noindex, nofollow, nocache">'), prepubRobots, emptySitemap));
   assertRejects('meta-data custom element', () =>
-    validateArtifacts('prepub', htmlDocument('<meta-data name="robots" content="noindex, nofollow, nocache">'), prepubRobots));
+    validateArtifacts('prepub', htmlDocument('<meta-data name="robots" content="noindex, nofollow, nocache">'), prepubRobots, emptySitemap));
   assertRejects('robots metadata after implicit head closure', () =>
-    validateArtifacts('prepub', `<html><head><body>${prepubMeta}</body></html>`, prepubRobots));
+    validateArtifacts('prepub', `<html><head><body>${prepubMeta}</body></html>`, prepubRobots, emptySitemap));
   assertRejects('contradictory robots.txt in prepub mode', () =>
-    validateArtifacts('prepub', prepubHtml, `${prepubRobots}Allow: /\n`));
+    validateArtifacts('prepub', prepubHtml, `${prepubRobots}Allow: /\n`, emptySitemap));
   assertRejects('contradictory robots.txt in published mode', () =>
-    validateArtifacts('published', publishedHtml, `${publishedRobots}Disallow: /\n`));
+    validateArtifacts('published', publishedHtml, `${publishedRobots}Disallow: /\n`, publishedSitemap));
   assertRejects('specific-agent published override in prepub mode', () =>
-    validateArtifacts('prepub', prepubHtml, `${prepubRobots}User-agent: Googlebot\nAllow: /\n`));
+    validateArtifacts('prepub', prepubHtml, `${prepubRobots}User-agent: Googlebot\nAllow: /\n`, emptySitemap));
   assertRejects('specific-agent prepub override in published mode', () =>
-    validateArtifacts('published', publishedHtml, `${publishedRobots}User-agent: Googlebot\nDisallow: /\n`));
+    validateArtifacts('published', publishedHtml, `${publishedRobots}User-agent: Googlebot\nDisallow: /\n`, publishedSitemap));
+  assertRejects('missing sitemap artifact', () => validateArtifacts('prepub', prepubHtml, prepubRobots));
+  assertRejects('published sitemap hidden canonical', () => validateArtifacts('published', publishedHtml, publishedRobots, emptySitemap));
+  assertRejects('prepub sitemap exposed canonical', () => validateArtifacts('prepub', prepubHtml, prepubRobots, publishedSitemap));
 
   console.log('indexing contract self-test: OK');
 }
@@ -254,7 +275,8 @@ if (flag !== '--mode' || !['prepub', 'published'].includes(mode) || process.argv
 const outputDirectory = join(process.cwd(), 'out');
 const indexHtml = readFileSync(join(outputDirectory, 'index.html'), 'utf8');
 const robotsTxt = readFileSync(join(outputDirectory, 'robots.txt'), 'utf8');
+const sitemapXml = readFileSync(join(outputDirectory, 'sitemap.xml'), 'utf8');
 
-validateArtifacts(mode, indexHtml, robotsTxt);
+validateArtifacts(mode, indexHtml, robotsTxt, sitemapXml);
 
 console.log(`indexing contract: OK (${mode})`);
